@@ -29,6 +29,7 @@ export default defineConfig({
         news_items: "components/bloks/NewsItems",
         richtext: "components/bloks/RichText",
         banner: "components/bloks/Banner",
+        maps: "components/bloks/maps",
       },
       apiOptions: {
         region: env.STORYBLOK_REGION, 
