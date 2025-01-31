@@ -1,38 +1,59 @@
 ---
-import { storyblokEditable, renderRichText } from "@storyblok/astro";
-import Link from "@components/navigation/Link.astro"; 
+import { renderRichText } from "@storyblok/astro";
+import DOMPurify from "dompurify"; // Import DOMPurify
+
 interface Props {
   blok: TextMediaStoryblok;
 }
 
 const { blok } = Astro.props;
 
-const { content, surface, align, links } = blok;
+const { title, iframe_url } = blok;
 
-const renderedRichText = renderRichText(content);
+// Ensure iframe_url is a string
+let iframeContent = "";
+
+console.log("iframe_url:", iframe_url);
+
+if (typeof iframe_url === "string") {
+  // Extract the iframe HTML from the <p> tag
+  const iframeHtml = iframe_url.replace(/^<p>|<\/p>$/g, ""); // Unescape HTML characters (good practice)
+
+  const unescapeHtml = (html: any) => {
+    return html
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, "&");
+  };
+
+  const unescapedHtml = unescapeHtml(iframeHtml);
+
+  if (typeof window !== "undefined") {
+    // Browser environment
+    const safeIframeContent = DOMPurify.sanitize(unescapedHtml); // Sanitize!!
+    iframeContent = safeIframeContent;
+  } else {
+    // Server environment
+    iframeContent = unescapedHtml; // Or a safe default for SSR
+  }
+} else {
+  console.error("iframe_url is not a string:", iframe_url);
+}
 ---
 
-  <div
-  {...storyblokEditable(blok)}
-    class={`${surface || ""} intersecting`}
->
+<div>
   <div class="content-grid">
     <div
-      class={`richtext max-w-3xl ${align || ""} scale-in grid h-fit grid-cols-1 gap-8 py-14 md:py-20`}
+      class={`richtext max-w-3xl scale-in grid h-fit grid-cols-1 gap-8 py-14 md:py-20`}
     >
-      <div set:html={renderedRichText} class="text-ellipsis" />
-
+      <div set:html={title} class="text-ellipsis" />
       {
-        links && links.length > 0 && (
-          <div class="inline-flex flex-wrap gap-4">
-            {links.map((link) => (
-              <Link
-                blok={{
-                  ...link,
-                }}
-              />
-            ))}
-          </div>
+        iframeContent && (
+          <div
+            set:html={iframeContent}
+            class="richtext max-w-2xl text-ellipsis"
+          />
         )
       }
     </div>
