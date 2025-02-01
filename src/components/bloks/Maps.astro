@@ -1,5 +1,8 @@
 ---
 import { renderRichText } from "@storyblok/astro";
+import Link from "@components/navigation/Link.astro";
+import VideoInline from "@components/media/VideoInline.vue";
+import Picture from "@components/media/Picture.astro";
 import DOMPurify from "dompurify"; // Import DOMPurify
 
 interface Props {
@@ -8,17 +11,49 @@ interface Props {
 
 const { blok } = Astro.props;
 
-const { title, iframe_url } = blok;
+const { title, address, links, iframe_url, surface, align, container, image, video, opacity } = blok;
+
+const renderedRichTextAddress = renderRichText(address);
 
 // Ensure iframe_url is a string
 let iframeContent = "";
 
-console.log("iframe_url:", iframe_url);
+// Function to extract HTML from rich text structure
+const extractHtmlFromRichText = (richText: any) => {
+  if (!richText || !richText.content) return "";
 
-if (typeof iframe_url === "string") {
-  // Extract the iframe HTML from the <p> tag
-  const iframeHtml = iframe_url.replace(/^<p>|<\/p>$/g, ""); // Unescape HTML characters (good practice)
+  // Recursively extract text from the rich text structure
+  const extractText = (node: any) => {
+    if (node.type === "text") {
+      return node.text;
+    } else if (node.content) {
+      return node.content.map(extractText).join("");
+    }
+    return "";
+  };
 
+  return richText.content.map(extractText).join("");
+};
+
+function getSizes() {
+  if (!container) return `100vw `;
+  if (container === "full-width") return `100vw `;
+  if (container === "breakout")
+    return `(min-width: var(--breakout-max-width)) var(--breakout-max-width), (min-width: 768px) 100vw, 100vw `;
+  return `(min-width: var(--content-max-width)) var(--content-max-width), (min-width: 768px) 100vwvw, 100vw `;
+}
+
+function getContainerClass() {
+  if (!container || container === "full-width")
+    return "full-width parallax-wrap ";
+  return `${container} rounded-xl overflow-hidden my-8 parallax-wrap `;
+}
+
+if (iframe_url && iframe_url.type === "doc") {
+  // Extract the HTML content from the rich text structure
+  const iframeHtml = extractHtmlFromRichText(iframe_url);
+
+  // Unescape HTML characters (good practice)
   const unescapeHtml = (html: any) => {
     return html
       .replace(/&lt;/g, "<")
@@ -38,24 +73,112 @@ if (typeof iframe_url === "string") {
     iframeContent = unescapedHtml; // Or a safe default for SSR
   }
 } else {
-  console.error("iframe_url is not a string:", iframe_url);
+  console.error("iframe_url is not in the expected format:", iframe_url);
 }
 ---
 
-<div>
-  <div class="content-grid">
-    <div
-      class={`richtext max-w-3xl scale-in grid h-fit grid-cols-1 gap-8 py-14 md:py-20`}
-    >
-      <div set:html={title} class="text-ellipsis" />
-      {
-        iframeContent && (
-          <div
-            set:html={iframeContent}
-            class="richtext max-w-2xl text-ellipsis"
-          />
-        )
-      }
+<div class={` ${surface || ""} intersecting`}>
+  <div class="content-grid isolate">
+    <div class={getContainerClass()}>
+      <div class={`${surface} ${align || ""} relative w-full overflow-hidden`}>
+        <div class={`parallax absolute inset-0 overflow-hidden ${opacity || ""}`}>
+              {
+                !video?.filename && blok?.image?.filename && (
+                  <Picture
+                    src={image.filename}
+                    alt={image.alt || image.name}
+                    className="fade-in"
+                    sizes={getSizes()}
+                    ar={16 / 9}
+                    layout="fill"
+                  />
+                )
+              }
+              {
+                video?.filename && (
+                  <VideoInline
+                    url={video.filename}
+                    client:visible
+                    className="fade-in"
+                  >
+                    {blok?.image?.filename && (
+                      <Picture
+                        src={image.filename}
+                        alt={image.alt || image.name}
+                        sizes={getSizes()}
+                        ar={16 / 9}
+                        layout="fill"
+                      />
+                    )}
+                  </VideoInline>
+                )
+              }
+        </div>
+
+
+        <div class={!container || container === "full-width" ? "content-grid relative" : "relative px-2 sm:px-4 md:px-8"}>
+          <div class={`scale-in h-fit grid grid-cols-1 gap-4 sm:${align || ""} `}>
+              
+            <div
+              class={`richtext max-w-4xl scale-in grid h-fit grid-cols-1 gap-8 py-20 md:py-28`}
+            >
+              <!-- Título -->
+              <h3 set:html={title} class="text-ellipsis text-5xl md:text-6xl"></h3>
+
+              <!-- Contenedor de dos columnas -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Columna 1 -->
+                <div class="col-span-1">
+                  <!-- Contenido de la primera columna -->
+                  <p>
+                    <!-- Iframe (si existe) -->
+                    {
+                      iframeContent && (
+                        <div
+                          set:html={iframeContent}
+                          class="richtext max-w-2xl text-ellipsis text-lg md:text-xl"
+                        />
+                      )
+                    }
+                  </p>
+                </div>
+
+                <!-- Columna 2 -->
+                <div class="col-span-1 sm:text-right">
+                  <!-- Contenido de la segunda columna -->
+                  <p set:html={renderedRichTextAddress} class="text-ellipsis text-lg md:text-xl"></p>
+                  {
+                    links && links.length > 0 && (
+                      <div class="buttons flex flex-col items-end w-full gap-6 pt-6">
+                        {links.map((link) => (
+                          <div class="self-end w-full">
+                            <Link
+                              blok={{
+                                ...link,
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  }        
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+
+
+
+
+      </div>
     </div>
+
+
+    
+    
+    <!--  -->
   </div>
 </div>
