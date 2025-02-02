@@ -30,6 +30,7 @@ export default defineConfig({
         richtext: "components/bloks/RichText",
         banner: "components/bloks/Banner",
         maps: "components/bloks/maps",
+        contact_form: "components/bloks/contact",
       },
       apiOptions: {
         region: env.STORYBLOK_REGION, 

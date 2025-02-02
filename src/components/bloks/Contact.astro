@@ -1,0 +1,21 @@
+---
+import { storyblokEditable, renderRichText } from '@storyblok/astro';
+import ContactForm from '@components/navigation/ContactForm.vue'; // Import your Vue component
+
+interface Props {
+  blok: any; // Your Storyblok block type for the contact form
+}
+
+const { blok } = Astro.props;
+const { title, success_message, error_message, form_id } = blok;
+
+---
+
+<div {...storyblokEditable(blok)}>
+  <h2>{title}</h2>
+  <ContactForm 
+    formId={form_id}
+    successMessage={success_message}
+    errorMessage={error_message}
+  />
+</div>
