@@ -30,7 +30,7 @@ export default defineConfig({
         richtext: "components/bloks/RichText",
         banner: "components/bloks/Banner",
         maps: "components/bloks/Maps",
-        contact_form: "components/bloks/contact",
+        /* contact_form: "components/bloks/contact", */
         FormWrapper: "components/bloks/FormWrapper",
         FormInput: "components/bloks/FormInput",
         FormTextArea: "components/bloks/FormTextArea",
