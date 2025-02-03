@@ -13,7 +13,7 @@ const env = loadEnv("", process.cwd(), ["STORYBLOK", "NETLIFY"]);
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://astrorante.unfolding.io/", 
+  site: "https://restaurantemarysol.com", 
   adapter: env.NETLIFY ? netlify() : vercel(), // vercel() or netlify()
   integrations: [
     storyblok({
@@ -31,6 +31,10 @@ export default defineConfig({
         banner: "components/bloks/Banner",
         maps: "components/bloks/maps",
         contact_form: "components/bloks/contact",
+        FormWrapper: "components/bloks/FormWrapper",
+        FormInput: "components/bloks/FormInput",
+        FormTextArea: "components/bloks/FormTextArea",
+        FormCheckBox: "components/bloks/FormCheckBox",
       },
       apiOptions: {
         region: env.STORYBLOK_REGION, 

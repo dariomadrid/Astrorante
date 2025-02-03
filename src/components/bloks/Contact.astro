@@ -1,15 +1,17 @@
 ---
-import { storyblokEditable, renderRichText } from '@storyblok/astro';
-import ContactForm from '@components/navigation/ContactForm.vue'; // Import your Vue component
+//import ContactForm from '@components/navigation/ContactForm.vue'; // Import your Vue component
+import ContactForm from '../../components/navigation/ContactForm.vue'; // Relative path
 
 interface Props {
   blok: any; // Your Storyblok block type for the contact form
 }
 
 const { blok } = Astro.props;
-const { title, success_message, error_message, form_id, name, email, message, surface, align, container } = blok;
+//const { title, success_message, error_message, form_id, name, email, message, surface, align, container } = blok;
+const { form_id, name, email, message, success_message, error_message } = blok;
 
-function getSizes() {
+
+/* function getSizes() {
   if (!container) return `100vw `;
   if (container === "full-width") return `100vw `;
   if (container === "breakout")
@@ -22,9 +24,9 @@ function getContainerClass() {
     return "full-width parallax-wrap ";
   return `${container} rounded-xl overflow-hidden my-8 parallax-wrap `;
 }
-
+ */
 ---
-
+<!-- 
 <div class={` ${surface || ""} intersecting`}>
   <div class="content-grid isolate">
     <div class={getContainerClass()}>
@@ -40,16 +42,25 @@ function getContainerClass() {
 
             <h2>{title}</h2>
             <ContactForm 
-              formId={form_id}
-              success_message={success_message}
-              error_message={error_message}
+              formId={form_id}              
               name={name}
               email={email}
               message={message}
+              success_message={success_message}
+              error_message={error_message}
             />
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</div> -->
+
+<ContactForm 
+    formId={form_id}              
+    name={name}
+    email={email}
+    message={message}
+    success_message={success_message}
+    error_message={error_message}
+/>

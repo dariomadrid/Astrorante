@@ -1,0 +1,9 @@
+---
+
+interface Props {
+  blok: any; // Your Storyblok block type for the contact form
+}
+
+const { blok } = Astro.props;
+//const { title, success_message, error_message, form_id, name, email, message, surface, align, container } = blok;
+const { form_id, name, email, message, success_message, error_message } = blok;
