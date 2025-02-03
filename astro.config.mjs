@@ -29,7 +29,7 @@ export default defineConfig({
         news_items: "components/bloks/NewsItems",
         richtext: "components/bloks/RichText",
         banner: "components/bloks/Banner",
-        maps: "components/bloks/maps",
+        maps: "components/bloks/Maps",
         contact_form: "components/bloks/contact",
         FormWrapper: "components/bloks/FormWrapper",
         FormInput: "components/bloks/FormInput",
