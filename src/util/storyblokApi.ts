@@ -27,7 +27,8 @@ export const getSettings = async (lang?: string | undefined) => {
         language: !lang ? "default" : lang,
       },
     )) as ISbResult;
-
+    console.log(`Settings fetched successfully for ${lang}`); // Log the fetched data
+    
     return settingsData?.story?.content as SettingsStoryblok;
   } catch (error) {
     console.log("Fetch Settings error:", error);
