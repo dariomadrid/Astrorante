@@ -14,7 +14,8 @@ const env = loadEnv("", process.cwd(), ["STORYBLOK", "NETLIFY"]);
 // https://astro.build/config
 export default defineConfig({
   site: "https://restaurantemarysol.com", 
-  adapter: env.NETLIFY ? netlify() : vercel(), // vercel() or netlify()
+  /* adapter: env.NETLIFY ? netlify() : vercel(), // vercel() or netlify() */
+  adapter: netlify(), // vercel() or netlify()
   integrations: [
     storyblok({
       accessToken: env.STORYBLOK_PREVIEW_TOKEN,
