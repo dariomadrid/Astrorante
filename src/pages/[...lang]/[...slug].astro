@@ -12,48 +12,50 @@ import { translateUrl } from "@util/translate";
 import { SITE_LANG } from "astro:env/server";
 
 export async function getStaticPaths() {
-  try {
-    const { data } = (await api.get("cdn/spaces/me", {})) as SpaceObj;
-    const locales = [SITE_LANG, ...data.space.language_codes];
+    try {
+        const { data } = (await api.get("cdn/spaces/me", {})) as SpaceObj;
+        const locales = [SITE_LANG, ...data.space.language_codes];
 
-    /* GET ALL PAGES AND POSTS IN ALL LANGUAGES */
-    const pages = locales.flatMap(async (lang, index) => {
-      const dataLang = index === 0 ? "default" : lang;
-      const settings = await getSettings(lang);
-     
+        /* GET ALL PAGES AND POSTS IN ALL LANGUAGES (Corrected) */
+        const allPagesAndPosts = []; // Array to hold all pages and posts
 
-      const pages = await getPages(
-        dataLang,
-        import.meta.env.DEV ? "draft" : "published",
-        settings,
-        locales,
-      );
+        for (const lang of locales) { // Use a loop to process each language sequentially
+            const dataLang = lang === SITE_LANG ? "default" : lang; // Corrected conditional
 
-      const post = await getPosts(
-        dataLang,
-        import.meta.env.DEV ? "draft" : "published",
-        settings,
-        locales,
-      );
+            const settings = await getSettings(lang);
 
-      return [...pages, ...post];
-    });
+            const pages = await getPages(
+                dataLang,
+                import.meta.env.DEV ? "draft" : "published",
+                settings,
+                locales
+            );
 
-    const routes = await Promise.all(pages);
+            const posts = await getPosts( // Corrected variable name
+                dataLang,
+                import.meta.env.DEV ? "draft" : "published",
+                settings,
+                locales
+            );
 
-    return routes.flat();
-  } catch (e) {
-    console.log("Error", e);
+            allPagesAndPosts.push(...pages, ...posts); // Add to the array
+        }
 
-    return [
-      {
-        params: {
-          slug: undefined,
-        },
-      },
-    ];
-  }
+        return allPagesAndPosts; // Return the combined array
+
+    } catch (e) {
+        console.error("Error in getStaticPaths:", e); // More informative error message
+
+        return [ // Return a default path in case of error
+            {
+                params: {
+                    slug: undefined,
+                },
+            },
+        ];
+    }
 }
+
 let { settings, story, locales } = Astro.props;
 
 if (!settings) {
