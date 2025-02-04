@@ -5,6 +5,8 @@ import type { ISbStories, ISbStoryData, ISbResult } from "@storyblok/astro";
 import { STORYBLOK_SPACE_ID, STORYBLOK_REGION, getSecret } from "astro:env/server";
 
 const token = getSecret("STORYBLOK_PERSONAL_TOKEN");
+console.log("STORYBLOK_PERSONAL_TOKEN", token);
+
 export const api = useStoryblokApi();
 
 const Storyblok = new StoryblokClient({
@@ -28,11 +30,11 @@ export const getSettings = async (lang?: string | undefined) => {
       },
     )) as ISbResult;
     console.log(`Settings fetched successfully for ${lang}`); // Log the fetched data
-    
+
     return settingsData?.story?.content as SettingsStoryblok;
   } catch (error) {
     console.log("Fetch Settings error:", error);
-    throw new Error("Can't fetch settings, is it published?");
+    throw new Error(`Can't fetch settings from ${lang}, is it published?`);
   }
 };
 

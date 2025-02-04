@@ -10,12 +10,13 @@ import netlify from "@astrojs/netlify";
 import vercel from "@astrojs/vercel";
 
 const env = loadEnv("", process.cwd(), ["STORYBLOK", "NETLIFY"]);
+console.log("STORYBLOK_PREVIEW_TOKEN", env.STORYBLOK_PREVIEW_TOKEN);
+console.log("STORYBLOK_PERSONAL_TOKEN", env.STORYBLOK_PERSONAL_TOKEN);
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://restaurantemarysol.com", 
-  /* adapter: env.NETLIFY ? netlify() : vercel(), // vercel() or netlify() */
-  adapter: netlify(), // vercel() or netlify()
+  adapter: env.NETLIFY ? netlify() : vercel(), // vercel() or netlify()
   integrations: [
     storyblok({
       accessToken: env.STORYBLOK_PREVIEW_TOKEN,
@@ -31,7 +32,7 @@ export default defineConfig({
         richtext: "components/bloks/RichText",
         banner: "components/bloks/Banner",
         maps: "components/bloks/Maps",
-        /* contact_form: "components/bloks/contact", */
+        contact_form: "components/bloks/contact",
         FormWrapper: "components/bloks/FormWrapper",
         FormInput: "components/bloks/FormInput",
         FormTextArea: "components/bloks/FormTextArea",
