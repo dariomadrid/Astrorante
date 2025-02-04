@@ -1,5 +1,5 @@
 ---
-import { api, getPostsData, getSettings } from "@util/storyblokApi";
+import { api, getPostsData, getPages, getPosts, getSettings } from "@util/storyblokApi";
 import { renderRichText } from "@storyblok/astro";
 import Layout from "@layouts/Layout.astro";
 import PostCard from "@components/cards/PostCard.astro";
@@ -7,29 +7,53 @@ import { SITE_LANG } from "astro:env/server";
 import Link from "@components/navigation/Link.astro";
 import { translateUrl, useTranslations } from "@util/translate";
 
-export async function getStaticPaths({ paginate }: { paginate: Function }) {
-  const { data } = (await api.get("cdn/spaces/me", {})) as SpaceObj;
-  const locales = [SITE_LANG, ...data.space.language_codes];
+export async function getStaticPaths() {
+  try {
+    const { data } = (await api.get("cdn/spaces/me", {})) as SpaceObj;
+    const locales = [SITE_LANG, ...data.space.language_codes];
 
-  /* GET ALL PAGES */
-  const pages = locales.flatMap(async (lang, index) => {
-    const dataLang = index === 0 ? "default" : lang;
-    const status = import.meta.env.DEV ? "draft" : "published";
-    const post = await getPostsData(dataLang, status);
-    const settings = await getSettings(lang);
-    const indexPages = paginate(post, { pageSize: 10 });
+    /* GET ALL PAGES AND POSTS IN ALL LANGUAGES */
+    const pages = locales.flatMap(async (lang, index) => {
+      const dataLang = index === 0 ? "default" : lang;
+      let settings;
+      try {
+        settings = await getSettings(lang);
+      } catch (error) {
+        console.error(`Failed to fetch settings for ${lang}:`, error);
+        return [];
+      }
 
-    return indexPages.map((page: any) => ({
-      params: {
-        page: page.params.page,
-        lang: dataLang === "default" ? undefined : dataLang,
-      },
-      props: { ...page.props, status, settings, locales },
-    }));
-  });
+      const pages = await getPages(
+        dataLang,
+        import.meta.env.DEV ? "draft" : "published",
+        settings,
+        locales,
+      );
 
-  const routes = await Promise.all(pages);
-  return routes.flat();
+      const post = await getPosts(
+        dataLang,
+        import.meta.env.DEV ? "draft" : "published",
+        settings,
+        locales,
+      );
+
+      return [...pages, ...post];
+    });
+
+    const routes = await Promise.all(pages);
+
+    return {
+      paths: routes.flat(),
+      fallback: false
+    };
+  } catch (e) {
+    console.error("Error fetching static paths:", e);
+
+    return {
+      paths: [],
+      fallback: false
+    };
+  }
 }
 let { lang } = Astro.params;
 let { page, settings, locales } = Astro.props;
