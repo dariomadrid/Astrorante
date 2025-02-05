@@ -5,9 +5,9 @@
   STORYBLOK_PREVIEW_TOKEN = "gquTXrFGQ4ReztEBRee8Ygtt"
   STORYBLOK_PERSONAL_TOKEN = "Vy9a3iG3xUNRTIkeQ7E8Ggtt-262722-eG4jG2AdwsfMyKjzu9Ud"
   STORYBLOK_SPACE_ID = "308530"
-  LOCALE = "en-US"
-  CURRENCY = "USD"
-  SITE_LANG = "en"
+  LOCALE = "es-ES"
+  CURRENCY = "EUR"
+  SITE_LANG = "es"
 
 [build]
   command = "npm run build"
