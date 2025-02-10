@@ -102,6 +102,7 @@ const labels = {
 };
 
 let socialImage = meta.image + "/m/1200x630/smart/filters:format(png)";
+
 ---
 
 <!doctype html>
@@ -206,7 +207,7 @@ let socialImage = meta.image + "/m/1200x630/smart/filters:format(png)";
       >
         {
           localeUrls && localeUrls.length > 1 && (
-            <div class="pointer-events-auto">
+            <div class="pointer-events-auto">              
               <LangSwitch
                 client:idle
                 {localeUrls}
@@ -224,7 +225,7 @@ let socialImage = meta.image + "/m/1200x630/smart/filters:format(png)";
             class="flex items-center gap-3"
             aria-label={company_name}
           >
-            <Icon name="logo" is:inline class="h-auto w-16" />
+            <Icon name="logo_bn" class="h-auto w-32" />
             <!--  <span class="text-heading text-2xl">{company_name}</span> -->
           </div>
           <ul

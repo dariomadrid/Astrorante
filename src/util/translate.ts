@@ -3,6 +3,7 @@ import { SITE_LANG, CURRENCY, LOCALE } from "astro:env/server";
 import en from "@/i18n/en.json";
 import de from "@/i18n/de.json";
 import es from "@/i18n/es.json";
+import ca from "@/i18n/ca.json";
 import nl from "@/i18n/nl.json";
 import fr from "@/i18n/fr.json";
 
@@ -10,6 +11,7 @@ const translations: Record<string, Locale> = {
   en,
   de,
   es,
+  ca,
   nl,
   fr,
 };
