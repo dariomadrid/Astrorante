@@ -1,9 +1,28 @@
 ---
+import { storyblokEditable } from "@storyblok/astro";
+import StoryblokComponent from "@storyblok/astro/StoryblokComponent.astro";
 
 interface Props {
   blok: any; // Your Storyblok block type for the contact form
 }
 
 const { blok } = Astro.props;
-//const { title, success_message, error_message, form_id, name, email, message, surface, align, container } = blok;
-const {} = blok;
+//console.log(blok.Contacta);
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-12 w-full">
+  <div class="col-span-1">
+    {
+      blok.Maps?.map((blok: any) => {
+        return <StoryblokComponent blok={blok} />;
+      })
+    }
+  </div>
+  <div class="col-span-1">
+    {
+      blok.Contacta?.map((blok: any) => {
+        return <StoryblokComponent blok={blok} />;
+      })      
+    }
+  </div>
+</div>

@@ -36,6 +36,7 @@ export default defineConfig({
         FormInput: "components/bloks/FormInput",
         FormTextArea: "components/bloks/FormTextArea",
         FormCheckBox: "components/bloks/FormCheckBox",
+        Contact: "components/bloks/Contact",
       },
       apiOptions: {
         region: env.STORYBLOK_REGION, 
